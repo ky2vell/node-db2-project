@@ -53,14 +53,38 @@ router.post('/', async (req, res, next) => {
 
 // // @desc    Update car
 // // @route   PUT /api/cars/:id
-// router.put('/:id', async (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-// });
+    await db('cars').where({ id }).update({
+      VIN: req.body.VIN,
+      make: req.body.make,
+      model: req.body.model,
+      mileage: req.body.mileage,
+      transmission: req.body.transmission,
+      titleStatus: req.body.titleStatus
+    });
+
+    const car = await db('cars').where({ id }).first();
+
+    res.status(200).json({ data: car });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // // @desc    Delete car
 // // @route   DELETE /api/cars/:id
-// router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const count = await db('cars').where({ id }).del();
 
-// });
+    res.status(200).json({ message: `${count} record(s) has been deleted` });
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router;
