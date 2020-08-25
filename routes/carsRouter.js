@@ -17,15 +17,39 @@ router.get('/', async (req, res, next) => {
 
 // @desc    Get single car
 // @route   GET /api/cars/:id
-// router.get('/:id', async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const car = await db('cars').where({ id }).first();
 
-// });
+    res.status(200).json({ data: car });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // // @desc    Create car
 // // @route   POST /api/cars
-// router.post('/', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
+  try {
+    const id = await db
+      .insert({
+        VIN: req.body.VIN,
+        make: req.body.make,
+        model: req.body.model,
+        mileage: req.body.mileage,
+        transmission: req.body.transmission,
+        titleStatus: req.body.titleStatus
+      })
+      .into('cars');
 
-// });
+    const car = await db('cars').where({ id }).first();
+
+    res.status(201).json({ data: car });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // // @desc    Update car
 // // @route   PUT /api/cars/:id
